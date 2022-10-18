@@ -1,58 +1,88 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
+import { useGeographic } from 'ol/proj';
 import OSM from 'ol/source/OSM';
 import 'ol/ol.css';
-
-
-
-
-
-
-
+import Point from 'ol/geom/Point';
+import {fromLonLat} from 'ol/proj';
+import Feature from 'ol/Feature';
+import VectorSource from 'ol/source/Vector';
+import {Icon, Style} from 'ol/style';
+import VectorLayer from 'ol/layer/Vector';
 
 
 export default function Adresse() {
 
-  const [map, setMap] = useState();
+  useGeographic();
 
-  const mapElement = useRef();
-  const mapRef = useRef();
-  mapRef.current = map;
+  const [map, setMap] = useState();
   const [X, setX] = useState(0);
   const [Y, setY] = useState(0);
+  const [UDI, setUDI_List] = useState([]);
+  const [quali, setQuali] = useState("");
 
+  const layers = [
+    new TileLayer({
+        source: new OSM(),
+    }),
+  ]
+  const view = new View({
+      center: [-5, 43],
+      // projection: 'EPSG:4326',
+      zoom: 0,
+  })
+
+  var mapAlready = false
 
   useEffect(() => {
-      var initialMap = new Map({
-        target: mapElement.current,
-          layers: [
-              new TileLayer({
-                  source: new OSM(),
-              }),
-          ],
-          view: new View({
-              center: [0, 0],
-              zoom: 2,
-          }),
+    if(!mapAlready){
+      const initialMap = new Map({
+        target: "map",
+        layers: layers,
+        view: view,
       });
-
-     
       setMap(initialMap);
+      mapAlready = true
+    }
+  }, []);
 
-      console.log(initialMap)
-      console.log("latitude:")
-      console.log(X)
+  const iconFeature = new Feature({
+    geometry: new Point(fromLonLat([X, Y])),
+    name: 'Somewhere near Nottingham',
+  });
+
+  useEffect(() => {
+   
+      if(map){
+        const view = map.getView();
+        view.setCenter([X,Y]);
+
+        console.log(map.getView())
+        console.log("Y:")
+        console.log(Y)
+
+       
+
+        new VectorSource({
+          source: new VectorSource({
+            features: [iconFeature]
+          }),
+          style: new Style({
+            image: new Icon({
+              anchor: [0.5, 46],
+              anchorXUnits: 'fraction',
+              anchorYUnits: 'pixels',
+              src: 'https://openlayers.org/en/latest/examples/data/icon.png'
+            })
+          })
+        })
+      }
+
+      
+      
   }, [X,Y]);
 
-    // React.useEffect( () => {
-    //     getCoordinates()
-
-    const [UDI, setUDI_List] = useState([])
-    const [quali, setQuali] = useState("")
-    
-    
-    // }, [])
 
     async function autofillAdress(event) {
         getCoordinates(event.target.value);
@@ -75,12 +105,6 @@ export default function Adresse() {
         setUDI_List(UDI_List.data)
         setX(geo_result.features[0].geometry.coordinates[0])
         setY(geo_result.features[0].geometry.coordinates[1])
-        var view = new View({
-          center: [X, Y],
-          zoom: 10,
-      })
-  
-      Map.setView(view)
        // curl "https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port"
     }
 
@@ -96,35 +120,18 @@ export default function Adresse() {
 
 
     }
-    // const map = new Map({
-    //   target: 'map',
-    //   layers: [
-    //     new TileLayer({
-    //       source: new XYZ({
-    //         url: 'https://tile.openstreetmap.org/{z}/{y}/{x}.png'
-    //       })
-    //     })
-    //   ],
-    //   view: new View({
-    //     center: [0, 0],
-    //     zoom: 2
-    //   })
-    // });
-
-
-
   return (
     <span>
     <h1>Mon adresse</h1>
     <input id="adresse" type="text" onChange={autofillAdress} ></input>
     <button >Trouver la source</button>
     <p>
-      {UDI.map((udi, i) =>
-      <span key={i} onClick={() => display_results(udi.code_reseau)}> quartier: {udi.nom_quartier} réseau: {udi.nom_reseau} code réseau:{udi.code_reseau}<br/></span>  )}
+      {/* {UDI.map((udi, i) =>
+      <span key={i} onClick={() => display_results(udi.code_reseau)}> quartier: {udi.nom_quartier} réseau: {udi.nom_reseau} code réseau:{udi.code_reseau}<br/></span>  )} */}
     </p>
 
     <p>{quali}</p>
-    <div style={{height:'100vh',width:'100%'}} ref={mapElement} className="map-container" />
+    <div style={{height:'100vh',width:'100%'}} className="map-container" id="map" />
  
 
     </span>
