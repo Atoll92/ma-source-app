@@ -424,11 +424,12 @@ async function changeHandler(event) {
             // var filteredValues = valuesArray.filter(row => row[12] != "0")
             var filteredValues = valuesArray
             for (var i = 0; i < 1000; i++) {
-                if (!Communes.some(commune => commune.code === filteredValues[i][3])) {
+                var curCodeCommune = filteredValues ? (filteredValues[i] ? filteredValues[i][3] : null) : null;
+                if (!Communes.some(commune => commune.code ===curCodeCommune)) {
                  
                     console.log("nouvelle commune")
                     // var coord = await  getStationCoordinates(filteredValues[i][5])
-                    var code_commune = filteredValues[i][3]
+                    var code_commune = curCodeCommune
                     if (code_commune.length === 4) {
                         code_commune = "0"+code_commune;
                         console.log("fixed code_commune")
@@ -447,9 +448,9 @@ async function changeHandler(event) {
                     Coords.push({features: coords })
                 }
 
-                else {
+                else if (curCodeCommune) {
 
-                    var CommuneIndex = Communes.findIndex((obj => obj.code == filteredValues[i][3]));
+                    var CommuneIndex = Communes.findIndex((obj => obj.code == curCodeCommune));
                     Communes[CommuneIndex].mesure.push(filteredValues[i])
                     console.log("already existing commune")
                     console.log("Communes");
