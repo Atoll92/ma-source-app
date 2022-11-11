@@ -92,9 +92,12 @@ const Stations = (Communes) => {
 
 
    async function pushCoords(c) {
-        for (var i=0; i<1000; i ++ ) {
+        for (var i=0; i<c.length; i ++ ) {
+            console.log("coords")
+            console.log(c[i])
             if(c[i]){
-                Coordinates.push(c[i].features.coordinates)
+                const newcoord = c[i].features.coordinates;
+                setCoordinates(prev => [...prev,newcoord])
             }
         }
     }
@@ -400,7 +403,7 @@ async function changeHandler(event) {
             const Stations_ = [];
             const valuesArray = [];
             const Communes = [];
-            const Coords = [];
+            const _Coords = [];
 
             // Iterating data to get column name and their values
             results.data.map((d) => {
@@ -425,7 +428,7 @@ async function changeHandler(event) {
             var filteredValues = valuesArray
             for (var i = 0; i < 1000; i++) {
                 var curCodeCommune = filteredValues ? (filteredValues[i] ? filteredValues[i][3] : null) : null;
-                if (curCodeCommune && !Communes.some(commune => commune.code ===curCodeCommune)) {
+                if (curCodeCommune && !Communes.some(commune => commune.code === curCodeCommune)) {
                  
                     console.log("nouvelle commune")
                     // var coord = await  getStationCoordinates(filteredValues[i][5])
@@ -445,9 +448,8 @@ async function changeHandler(event) {
                         mesure: [filteredValues[i]]
                     })
 
-                    Coords.push({features: coords })
+                    _Coords.push({features: coords })
                 }
-
                 else if (curCodeCommune) {
 
                     var CommuneIndex = Communes.findIndex((obj => obj.code == curCodeCommune));
@@ -475,17 +477,16 @@ async function changeHandler(event) {
                 setCoordsResults(Coords_results);
 
                 SetCoco([Communes])
-                setCoords(Coords);
-                pushCoords(Coords);
+                setCoords(_Coords);
                 // console.log("new commune")
                 // console.log(CommunesCoords)
                 // newMap();
 
             }
 
-
+            pushCoords(_Coords);
             setValues(filteredValues);
-     
+            console.log("completed changeHandler")
         },
     });
     console.log(event.target.files[0])
@@ -562,8 +563,8 @@ return (
         <br />
         <br />
 
-        {/* <MapGenerator Coordinates={Coordinates}/> */}
-    <div id="map3" className='map3'></div>
+        <MapGenerator Coordinates={Coordinates}/>
+    {/* <div id="map3" className='map3'></div> */}
         <table>
             <thead>
                 <tr>
