@@ -92,12 +92,11 @@ const Stations = (Communes) => {
 
 
    async function pushCoords(c) {
-        var i;
-        for (i=0; i<1000; i ++ ) {
-            Coordinates.push(c[i].features.coordinates)
+        for (var i=0; i<1000; i ++ ) {
+            if(c[i]){
+                Coordinates.push(c[i].features.coordinates)
+            }
         }
-
-
     }
     
 
