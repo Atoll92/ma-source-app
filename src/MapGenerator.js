@@ -30,9 +30,9 @@ import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 const MapGenerator = (props) => {
 
     useEffect(  () => {
-
-console.log("props.Coordinates is :" + props.Coordinates)
+        console.log("props.Coordinates is :" + props.Coordinates)
     },[props.Coordinates])
+    
     // const [map, setMap] = useState([]);
 
     // const image = new CircleStyle({
