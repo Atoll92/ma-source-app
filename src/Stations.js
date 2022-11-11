@@ -562,7 +562,7 @@ return (
         <br />
         <br />
 
-        <MapGenerator Coordinates={Coordinates}/>
+        {/* <MapGenerator Coordinates={Coordinates}/> */}
     <div id="map3" className='map3'></div>
         <table>
             <thead>
