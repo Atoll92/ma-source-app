@@ -31,6 +31,7 @@ import Graticule from 'ol/layer/Graticule';
 import {Circle as CircleStyle} from 'ol/style';
 import { Vector as VectorSource} from 'ol/source';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
+import MapGenerator from './MapGenerator';
 
 
 
@@ -90,15 +91,15 @@ const Stations = (Communes) => {
     }
 
 
-   async function pushCoords() {
+   async function pushCoords(c) {
         var i;
         for (i=0; i<1000; i ++ ) {
-            Coordinates.push(Coords[i].features.coordinates)
+            Coordinates.push(c[i].features.coordinates)
         }
 
 
     }
-    pushCoords();
+    
 
 
     async function newMap() {
@@ -474,7 +475,8 @@ async function changeHandler(event) {
                 setCoordsResults(Coords_results);
 
                 SetCoco([Communes])
-                setCoords(Coords)
+                setCoords(Coords);
+                pushCoords(Coords);
                 // console.log("new commune")
                 // console.log(CommunesCoords)
                 // newMap();
@@ -560,8 +562,8 @@ return (
         <br />
         <br />
 
-        <div className="map3" id="map3" />
- 
+        <MapGenerator Coordinates={Coordinates}/>
+    <div id="map3" className='map3'></div>
         <table>
             <thead>
                 <tr>
