@@ -425,7 +425,7 @@ async function changeHandler(event) {
             var filteredValues = valuesArray
             for (var i = 0; i < 1000; i++) {
                 var curCodeCommune = filteredValues ? (filteredValues[i] ? filteredValues[i][3] : null) : null;
-                if (!Communes.some(commune => commune.code ===curCodeCommune)) {
+                if (curCodeCommune && !Communes.some(commune => commune.code ===curCodeCommune)) {
                  
                     console.log("nouvelle commune")
                     // var coord = await  getStationCoordinates(filteredValues[i][5])
