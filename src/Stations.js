@@ -295,11 +295,11 @@ console.log("Coordinatess")
 
         
 
-        var mapAlready = false
+        // var mapAlready = false
 
-        useEffect(() => {
-            if(!mapAlready){
-                const initialmap = new Map({
+        // useEffect(() => {
+        //     if(!mapAlready){
+                const map = new Map({
                     target: 'map3',
         
                     // features: [iconFeature],
@@ -327,28 +327,28 @@ console.log("Coordinatess")
                    
                 });
 
-                setMap(initialMap);
-                mapAlready = true;
-            }
+                // setMap(initialMap);
+                // mapAlready = true;
+            
             //   setMap(initialMap);
             //   mapAlready = true
             // }
-        }, []);
+      
     
       
         
-          useEffect(() => {
+        //   useEffect(() => {
            
-              if(map){
+        //       if(map){
            
                
-                vectorLayer.changed()
+        //         vectorLayer.changed()
                 
-              }
+        //       }
         
               
               
-          }, [Coordinates]);
+        //   }, [Coordinates]);
               
 
         // const map = new Map({
