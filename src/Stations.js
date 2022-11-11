@@ -60,12 +60,26 @@ const Stations = (Communes) => {
     const [Coords_results, setCoordsResults]  = useState([])
     const [Coords , setCoords] = useState([]);
     const [Coordinates, setCoordinates] = useState([]);
+    const [map, setMap] = useState();
 
     function checklogs() {
         console.log(Coordinates[1][0]);
         console.log(Coordinates.length);
         console.log(CommunesCoords);
-        newMap()
+       
+        // useEffect(() => {
+   
+        //     if(map){
+            
+        //         map.render();
+             
+      
+              
+        //     } else {
+        //         newMap()
+        //     }
+        //    }, [Coordinates]);
+        
 
  
 
@@ -78,7 +92,7 @@ const Stations = (Communes) => {
 
    async function pushCoords() {
         var i;
-        for (i=0; i<Coords.length; i ++ ) {
+        for (i=0; i<1000; i ++ ) {
             Coordinates.push(Coords[i].features.coordinates)
         }
 
@@ -279,42 +293,97 @@ console.log("Coordinatess")
 
           
 
-      
+        
 
+        var mapAlready = false
+
+        useEffect(() => {
+            if(!mapAlready){
+                const initialmap = new Map({
+                    target: 'map3',
+        
+                    // features: [iconFeature],
+                    layers: [
+                        new TileLayer({
+                            source: new OSM(),
+                        }), 
+                        vectorLayer , 
+                       
+        
+        
+                    ],
+        
+                  
+        
+                 
+        
+        
+                    view: new View({
+                        center: Coordinates[0],
+                        zoom: 7,
+                    }),
+        
+                   
+                   
+                });
+
+                setMap(initialMap);
+                mapAlready = true;
+            }
+            //   setMap(initialMap);
+            //   mapAlready = true
+            // }
+        }, []);
+    
+      
+        
+          useEffect(() => {
+           
+              if(map){
+           
+               
+                vectorLayer.changed()
+                
+              }
+        
+              
+              
+          }, [Coordinates]);
               
 
-        const map = new Map({
-            target: 'map3',
+        // const map = new Map({
+        //     target: 'map3',
 
-            // features: [iconFeature],
-            layers: [
-                new TileLayer({
-                    source: new OSM(),
-                }), 
-                vectorLayer , 
+        //     // features: [iconFeature],
+        //     layers: [
+        //         new TileLayer({
+        //             source: new OSM(),
+        //         }), 
+        //         vectorLayer , 
                
 
 
-            ],
+        //     ],
+
+          
 
          
 
 
-            view: new View({
-                center: Coordinates[0],
-                zoom: 7,
-            }),
+        //     view: new View({
+        //         center: Coordinates[0],
+        //         zoom: 7,
+        //     }),
 
           
            
-        });
-       
+        // });
+        // setMap(map);
 
     }
 
    
-
-
+   
 
 
 
@@ -354,12 +423,19 @@ async function changeHandler(event) {
             // Filtered Values
             // var filteredValues = valuesArray.filter(row => row[12] != "0")
             var filteredValues = valuesArray
-            for (var i = 0; i < filteredValues.length; i++) {
-                // if (!Communes.some(commune => commune.code === filteredValues[i][3]))
+            for (var i = 0; i < 1000; i++) {
+                if (!Communes.some(commune => commune.code === filteredValues[i][3])) {
                  
                     console.log("nouvelle commune")
                     // var coord = await  getStationCoordinates(filteredValues[i][5])
-                    var coords = await getCoordinatesFromCodeCommune(filteredValues[i][3])
+                    var code_commune = filteredValues[i][3]
+                    if (code_commune.length === 4) {
+                        code_commune = "0"+code_commune;
+                        console.log("fixed code_commune")
+                        console.log(code_commune)
+                    }
+                    var coords = await getCoordinatesFromCodeCommune(code_commune)
+                    console.log([i])
 
                     Communes.push({
                         code: [i],
@@ -369,29 +445,29 @@ async function changeHandler(event) {
                     })
 
                     Coords.push({features: coords })
-                
+                }
 
-                // else {
+                else {
 
-                //     var CommuneIndex = Communes.findIndex((obj => obj.code == filteredValues[i][3]));
-                //     Communes[CommuneIndex].mesure.push(filteredValues[i])
-                //     console.log("already existing commune")
-                //     console.log("Communes");
-                //     Coords.push({features: coords })
-                //     // Coords.push({features: coords.features.coordinates[i] })
-                //     // setCoords( coords.features.coordinates[i])
+                    var CommuneIndex = Communes.findIndex((obj => obj.code == filteredValues[i][3]));
+                    Communes[CommuneIndex].mesure.push(filteredValues[i])
+                    console.log("already existing commune")
+                    console.log("Communes");
+                    // Coords.push({features: coords })
+                    // Coords.push({features: coords.features.coordinates[i] })
+                    // setCoords( coords.features.coordinates[i])
 
 
-                //     console.log(Communes);
+                    console.log(Communes);
                   
                     
-                //     // SetCoco(Communes)
+                    // SetCoco(Communes)
                     
-                //     // SetCoco(Communes[2].coords.coordinates)
+                    // SetCoco(Communes[2].coords.coordinates)
 
 
 
-                // }
+                }
 
              
 
@@ -477,12 +553,14 @@ return (
             style={{ display: "block", margin: "10px auto" }}
         />
         <div onClick={() => console.log(Stations)} >Debug</div>
-        <div onClick={newMap} >Refresh</div>
+        <div onClick={newMap} >Generate Map from Coordinates Array</div>
         <div onClick={checklogs} >Check logs</div>
 
 
         <br />
         <br />
+
+        <div className="map3" id="map3" />
  
         <table>
             <thead>
@@ -511,7 +589,7 @@ return (
                 })}
             </tbody>
         </table>
-        <div style={{ height: '350px', width: '350px' }} className="map3" id="map3" />
+       
         <div id="popup"></div>
 
 
