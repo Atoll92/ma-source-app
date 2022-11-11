@@ -1,0 +1,77 @@
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="227"
+   height="447"
+   viewBox="0 0 227 447"
+   fill="none"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="doublegeste-eau-icon.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <metadata
+     id="metadata15">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="738"
+     inkscape:window-height="480"
+     id="namedview13"
+     showgrid="false"
+     inkscape:zoom="0.52796421"
+     inkscape:cx="114.65172"
+     inkscape:cy="230.71187"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg11" />
+  <path
+     d="M 227,439.48635 C 227,443.636 224.09647,447 220.51483,447 c -3.58166,0 -6.48517,-3.364 -6.48517,-7.51365 0,-4.14966 5.85665,-8.94211 5.6281,-18.02706 4.4282,6.31375 7.34224,13.8774 7.34224,18.02706 z"
+     id="path2"
+     style="fill:url(#paint0_linear_102_2);stroke-width:0.05713806"
+     inkscape:connector-curvature="0" />
+  <defs
+     id="defs9">
+    <linearGradient
+       id="paint0_linear_102_2"
+       x1="113.5"
+       y1="-2.79988e-06"
+       x2="298.5"
+       y2="447"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.05713806,0,0,0.05713806,214.02966,421.45929)">
+      <stop
+         offset="0.526042"
+         stop-color="#1FB7D8"
+         stop-opacity="0.75"
+         id="stop4" />
+      <stop
+         offset="1"
+         stop-color="#D9D9D9"
+         stop-opacity="0"
+         id="stop6" />
+    </linearGradient>
+  </defs>
+</svg>

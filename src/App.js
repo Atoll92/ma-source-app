@@ -2,6 +2,9 @@ import logo from './doublegeste-eau.svg';
 import './App.css';
 import Adresse from './Adresse';
 import React, { useState, useEffect, useRef } from 'react';
+import Stations from './Stations';
+import Carte from './Carte';
+import LeafletMap from './LeafletMap';
 
 
 
@@ -15,12 +18,17 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Ma source App
-        </p>
+        <h1>
+          Ma source 
+        </h1>
         <Adresse/>
+        <Stations/>
+        {/* <LeafletMap/> */}
+       
           
       </header>
+      {/* <LeafletMap/>
+       */}
      
 
     </div>

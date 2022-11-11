@@ -21,6 +21,8 @@ export default function Adresse() {
   const [Y, setY] = useState(0);
   const [UDI, setUDI_List] = useState([]);
   const [quali, setQuali] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState([]);
+
 
   const layers = [
     new TileLayer({
@@ -28,9 +30,9 @@ export default function Adresse() {
     }),
   ]
   const view = new View({
-      center: [-5, 43],
+      center: [2, 47],
       // projection: 'EPSG:4326',
-      zoom: 0,
+      zoom: 5.2,
   })
 
   var mapAlready = false
@@ -57,6 +59,7 @@ export default function Adresse() {
       if(map){
         const view = map.getView();
         view.setCenter([X,Y]);
+        view.setZoom(9)
 
         console.log(map.getView())
         console.log("Y:")
@@ -64,25 +67,26 @@ export default function Adresse() {
 
        
 
-        new VectorSource({
-          source: new VectorSource({
-            features: [iconFeature]
-          }),
-          style: new Style({
-            image: new Icon({
-              anchor: [0.5, 46],
-              anchorXUnits: 'fraction',
-              anchorYUnits: 'pixels',
-              src: 'https://openlayers.org/en/latest/examples/data/icon.png'
-            })
-          })
-        })
+        
       }
 
       
       
   }, [X,Y]);
-
+  
+  new VectorSource({
+    source: new VectorSource({
+      features: [iconFeature]
+    }),
+    style: new Style({
+      image: new Icon({
+        anchor: [0.5, 46],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        src: 'https://openlayers.org/en/latest/examples/data/icon.png'
+      })
+    })
+  })
 
     async function autofillAdress(event) {
         getCoordinates(event.target.value);
@@ -108,7 +112,7 @@ export default function Adresse() {
        // curl "https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port"
     }
 
-    async function display_results(code_reseau) {
+    async function display_results(code_reseau, index) {
 
       setQuali("Chargement...")
       const reseau_results = await fetch('https://hubeau.eaufrance.fr/api//vbeta/qualite_eau_potable/resultats_dis?code_reseau=' + code_reseau + '&autocomplete=1&pretty');
@@ -117,24 +121,37 @@ export default function Adresse() {
 
       setQuali(resultats.data[0].conclusion_conformite_prelevement)
       console.log(resultats.data[0])
+      // document.getElementById("map").style.display = "block";
+
+      // setSelectedIndex(i);
+
+      const handleClick = (index) => () => {
+        setSelectedIndex(state => ({
+          ...state, // <-- copy previous state
+          [index]: !state[index] // <-- update value by index key
+        }));
+      };
+
+      handleClick();
 
 
     }
   return (
-    <span>
-    <h1>Mon adresse</h1>
+    <div>
+    <h1>Mon eau potable</h1>
     <input id="adresse" type="text" onChange={autofillAdress} ></input>
     <button >Trouver la source</button>
+    <p>{quali}</p>
     <p>
-      {/* {UDI.map((udi, i) =>
-      <span key={i} onClick={() => display_results(udi.code_reseau)}> quartier: {udi.nom_quartier} réseau: {udi.nom_reseau} code réseau:{udi.code_reseau}<br/></span>  )} */}
+      {UDI.map((udi, i) =>
+      <span  style={{height:'350px',width:'350px'}}  key={i} onClick={() => display_results(udi.code_reseau)}> quartier: {udi.nom_quartier} réseau: {udi.nom_reseau} code réseau:{udi.code_reseau} String()<br/></span>  )}
     </p>
 
-    <p>{quali}</p>
-    <div style={{height:'100vh',width:'100%'}} className="map-container" id="map" />
+    
+    <div style={{height:'350px',width:'350px'}} className="map-container" id="map" />
  
 
-    </span>
+    </div>
 
    
 

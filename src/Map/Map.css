@@ -1,0 +1,10 @@
+.map2 {
+    
+    width: 600px;
+    height: 600px;
+    /* position: absolute; */
+    z-index: 99;
+    display: block;
+    overflow: visible;
+    background: green;
+}
