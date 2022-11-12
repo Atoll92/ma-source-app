@@ -426,7 +426,7 @@ async function changeHandler(event) {
             // Filtered Values
             // var filteredValues = valuesArray.filter(row => row[12] != "0")
             var filteredValues = valuesArray
-            for (var i = 0; i < 1000; i++) {
+            for (var i = 0; i < 10000; i++) {
                 var curCodeCommune = filteredValues ? (filteredValues[i] ? filteredValues[i][3] : null) : null;
                 if (curCodeCommune && !Communes.some(commune => commune.code === curCodeCommune)) {
                  
