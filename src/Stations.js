@@ -137,7 +137,8 @@ console.log("Coordinatess")
     //       console.log(map1)
           
     //     console.log(Coords.flat(1));
-
+    console.log("geojsonObject")
+  
 
         
    
@@ -283,19 +284,20 @@ console.log("Coordinatess")
             
           const vectorSource = new VectorSource({
             features: new GeoJSON().readFeatures(geojsonObject),
+           
        
 
           });
           
-          vectorSource.addFeature(new Feature(new Circle([5e6, 7e6], 1e6)));
+        //   vectorSource.addFeature(new Feature(new Circle([5e6, 7e6], 1e6)));
           
           const vectorLayer = new VectorLayer({
             source: vectorSource,
             style: styleFunction,
           });
 
-          
-
+          console.log("geojsonObject")
+          console.log(geojsonObject)
         
 
         // var mapAlready = false
