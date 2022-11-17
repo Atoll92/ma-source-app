@@ -7,9 +7,13 @@ import 'ol/ol.css';
 import Point from 'ol/geom/Point';
 import {fromLonLat} from 'ol/proj';
 import Feature from 'ol/Feature';
+import Stroke from 'ol/style/Stroke';
+import GeoJSON from 'ol/format/GeoJSON';
 import VectorSource from 'ol/source/Vector';
 import {Icon, Style} from 'ol/style';
 import VectorLayer from 'ol/layer/Vector';
+import LineString from 'ol/geom/LineString';
+import { json } from 'react-router-dom';
 
 
 export default function Adresse() {
@@ -22,6 +26,7 @@ export default function Adresse() {
   const [UDI, setUDI_List] = useState([]);
   const [quali, setQuali] = useState("");
   const [selectedIndex, setSelectedIndex] = useState([]);
+  const [RiverCoordinates, setRiverCoordinates] = useState([]);
 
 
   // const layers = [
@@ -83,6 +88,16 @@ export default function Adresse() {
   //   name: 'Somewhere near Nottingham',
   // });
 
+  
+
+
+  const place = [X, Y];
+
+  const point = new Point(place);
+
+
+
+
   useEffect(() => {
    
       if(map){
@@ -97,7 +112,17 @@ export default function Adresse() {
           'circle-radius': 9,
           'circle-fill-color': 'red',
           },
-      }))
+         
+      }),
+      
+    )
+      
+    // map.addLayer(vectorLayerRiver)
+
+    
+
+
+    
       
         
         //  new VectorSource.addFeatures(point);
@@ -119,10 +144,28 @@ export default function Adresse() {
       
       
   }, [X,Y]);
+//   useEffect(() => {
+   
+//     updateRiverMap();
+    
+    
+// }, [RiverCoordinates]);
 
-  const place = [X, Y];
+ 
 
-  const point = new Point(place);
+//   useEffect(() => {
+//     const river = new LineString([RiverCoordinates[0].coordinates], "Linestring")
+//     if(map){
+//       // const view = map.getView();
+//       // view.setCenter([X,Y]);
+//       // view.setZoom(9)
+   
+
+//     }
+ 
+// }, [RiverCoordinates]);
+
+ 
 
 
   const layers = [
@@ -149,21 +192,7 @@ export default function Adresse() {
 
 
 
-  
-  
-  // new VectorSource({
-  //   source: new VectorSource({
-  //     features: [iconFeature]
-  //   }),
-  //   style: new Style({
-  //     image: new Icon({
-  //       anchor: [0.5, 46],
-  //       anchorXUnits: 'fraction',
-  //       anchorYUnits: 'pixels',
-  //       src: 'https://openlayers.org/en/latest/examples/data/icon.png'
-  //     })
-  //   })
-  // })
+
 
     async function autofillAdress(event) {
         getCoordinates(event.target.value);
@@ -173,7 +202,7 @@ export default function Adresse() {
     async function getCoordinates(adresse){
       
         console.log(adresse)
-        const adresse_result = await fetch('https://api-adresse.data.gouv.fr/search/?q=' + adresse + '&autocomplete=1&pretty');
+        const adresse_result = await fetch('https://api-adresse.data.gouv.fr/search/?q=' + adresse + '&autocomplete=1&pretty', {mode:'no-cors'});
         const geo_result = await adresse_result.json();
         console.log(geo_result);
         console.log(geo_result.features[0].geometry.coordinates[0])
@@ -181,7 +210,7 @@ export default function Adresse() {
         console.log("citycode")
         console.log(geo_result.features[0].properties.citycode)
         var code_commune = (geo_result.features[0].properties.citycode)
-        const UDIs = await fetch('https://hubeau.eaufrance.fr/api//vbeta/qualite_eau_potable/communes_udi?code_commune=' + code_commune + '&autocomplete=1&pretty');
+        const UDIs = await fetch('https://hubeau.eaufrance.fr/api/v1/qualite_eau_potable/communes_udi?code_commune=' + code_commune + '&autocomplete=1&pretty', {mode:'no-cors'});
         const UDI_List = await UDIs.json();
         console.log(UDI_List)
         setUDI_List(UDI_List.data)
@@ -196,29 +225,11 @@ export default function Adresse() {
       const coursdeau_result = await fetch('https://hubeau.eaufrance.fr/api/v2/qualite_rivieres/station_pc?code_commune=' + geo_result.features[0].properties.citycode + '&pretty');
       const coursdeau = await coursdeau_result.json();
       console.log("coursdeau");
-      console.log(coursdeau.data[0].code_cours_eau);
+      // console.log(coursdeau.data[0].code_cours_eau);
       var coursdeauvar = coursdeau.data[0].code_cours_eau
-      const coursdeau_geo = await fetch('https://services.sandre.eaufrance.fr/geo/sandre?SERVICE=WFS&amp;REQUEST=getFeature&amp;VERSION=2.0.0&amp;TYPENAME=CoursEau_Topage2019&amp;OUTPUTFORMAT=application/json%3B%20subtype%3Dgeojson&amp;FILTER=%3CFilter%3E%3CPropertyIsEqualTo%3E%3CPropertyName%3ECdOH%3C/PropertyName%3E%3CLiteral%3E' + coursdeauvar + '%3C/Literal%3E%3C/PropertyIsEqualTo%3E%3C/Filter%3E');
-      // const coursdeau_geojson = await coursdeau_geo.json();
-      const coursdeaux = await coursdeau_geo.json();
-    
-      console.log("coursdeau_geojson")
-      console.log(coursdeau_geo);
-      console.log(coursdeaux);
-    
-      // console.log(geo_result.features[0].geometry.coordinates[0])
-      // console.log(geo_result.features[0].geometry.coordinates[1])
-      // console.log("citycode")
-      // console.log(geo_result.features[0].properties.citycode)
-      // console.log(geo_result.features[0].properties.citycode)
-      // var code_commune = (geo_result.features[0].properties.citycode)
-      // const UDIs = await fetch('https://hubeau.eaufrance.fr/api//vbeta/qualite_eau_potable/communes_udi?code_commune=' + code_commune + '&autocomplete=1&pretty');
-      // const UDI_List = await UDIs.json();
-      // console.log(UDI_List)
-      // setUDI_List(UDI_List.data)
-      // setX(geo_result.features[0].geometry.coordinates[0])
-      // setY(geo_result.features[0].geometry.coordinates[1])
-     // curl "https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port"
+      Cours_json(coursdeauvar)
+      return coursdeauvar;
+
   }
     async function display_results(code_reseau, index) {
 
@@ -244,11 +255,146 @@ export default function Adresse() {
 
 
     }
+
+    async function Cours_json(coursdeauvar){
+      console.log(coursdeauvar)
+      
+      var URL = "https://services.sandre.eaufrance.fr/geo/sandre?SERVICE=WFS&REQUEST=getFeature&VERSION=2.0.0&TYPENAME=CoursEau_Carthage2017&OUTPUTFORMAT=application/json%3B%20subtype%3Dgeojson&FILTER=%3CFilter%3E%3CPropertyIsEqualTo%3E%3CPropertyName%3ECdEntiteHydrographique%3C/PropertyName%3E%3CLiteral%3E"
+      + coursdeauvar + "%3C/Literal%3E%3C/PropertyIsEqualTo%3E%3C/Filter%3E" 
+      console.log(URL)
+      const res = await fetch(URL);
+    
+      const restjson =   await res.json();
+      console.log("restjson");
+       console.log(restjson);
+       console.log("restjson_Linestring");
+       console.log(restjson.features[0].geometry);
+       var newrivercoord = restjson.features[0].geometry;
+       RiverCoordinates.push(newrivercoord)
+              setRiverCoordinates(RiverCoordinates);
+              console.log(RiverCoordinates);
+              console.log("RiverCoordinates[0]");
+              console.log(RiverCoordinates[0].coordinates);
+
+         
+
+      //  pushRiverCoords(restjson);
+    }
+
+  console.log("RiverCoordinates");
+
+   console.log(RiverCoordinates);
+
+
+   
+    
+
+  
+  // vectorSource.addFeature(new Feature(new Circle([5e6, 7e6], 1e6)));
+  
+
+
+
+  function updateRiverMap() {
+    const river = new LineString(RiverCoordinates[0].coordinates)
+    console.log("river");
+    console.log(river);
+  //   map.addLayer(new VectorLayer({
+  //     source: new VectorSource({
+  //     features: [new Feature(river)],
+  //     })
+
+ 
+
+
+  const geojsonRiver = {
+    'type': 'FeatureCollection',
+    'crs': {
+      'type': 'name',
+      'properties': {
+        'name': 'EPSG:3857',
+      },
+    },
+    // 'features': Coords.features
+    'features': [
+      {
+        'type': 'Feature',
+        'geometry': {
+          'type': 'LineString',
+          'coordinates': [RiverCoordinates[0].coordinates],
+        }},
+    // {
+    //         'type': 'Feature',
+    //         'geometry':RiverCoordinates[0]},
+       
+        ]
+
+        
+    }
+    const vectorSourceRiver = new VectorSource({
+      features: new GeoJSON().readFeatures(geojsonRiver),
+  
+  
+    });
+    const styles = {
+ 
+      'LineString': new Style({
+        stroke: new Stroke({
+          color: 'black',
+          width: 100,
+        }),
+      }),
+      
+      
+    };
+    
+    const styleFunction = function (feature) {
+      return styles[feature.getGeometry().getType()];
+    };
+
+    const vectorLayerRiver = new VectorLayer({
+      source: vectorSourceRiver,
+      style: styleFunction,
+    });
+
+    const map = new Map({
+      target: 'map',
+
+      // features: [iconFeature],
+      layers: [
+          new TileLayer({
+              source: new OSM(),
+          }), 
+          vectorLayerRiver , 
+         
+
+
+      ],
+      view: new View({
+        center: [X,Y],
+        zoom: 7,
+    }),
+
+   
+   
+});
+
+    // map.addLayer(vectorLayerRiver)
+    console.log("river drawn")
+    console.log(geojsonRiver)
+  
+  // }),)
+ 
+
+
+  }
+
   return (
     <div>
     <h1>Mon eau potable</h1>
     <input id="adresse" type="text" onChange={autofillAdress} ></input>
-    <button >Trouver la source</button>
+    <div onClick={() => Cours_json("V4330500")}>Json Cours d eau</div>
+    <div onClick={updateRiverMap} >Update River</div>
     <p>{quali}</p>
     <p>
       {UDI.map((udi, i) =>
@@ -257,6 +403,8 @@ export default function Adresse() {
 
     
     <div style={{height:'350px',width:'350px'}} className="map-container" id="map" />
+    {/* <div style={{height:'350px',width:'350px'}} className="map-container" id="map4" /> */}
+ 
  
 
     </div>
