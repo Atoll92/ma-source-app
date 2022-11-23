@@ -90,3 +90,12 @@ body {
 .leaflet-pane {
   transform: none!important;
 }
+
+.map-container{
+  width:350px;
+  height:350px;
+}
+
+#mapGF{
+  border: solid 5px grey;
+}

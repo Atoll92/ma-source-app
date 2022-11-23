@@ -2,7 +2,8 @@ import logo from './doublegeste-eau.svg';
 import './App.css';
 import Adresse from './Adresse';
 import React, { useState, useEffect, useRef } from 'react';
-import Stations from './Stations';
+//import Stations from './Stations';
+import Stations from './MapGenerationFuture';
 import Carte from './Carte';
 import LeafletMap from './LeafletMap';
 
