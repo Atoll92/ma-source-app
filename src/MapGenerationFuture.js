@@ -9,6 +9,8 @@ import Stroke from 'ol/style/Stroke';
 import { Vector as VectorSource} from 'ol/source';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import LineString from 'ol/geom/LineString';
+import Point from 'ol/geom/Point';
+import { Circle, Fill } from 'ol/style';
 
 const MapGenerationFuture = () => {
 
@@ -164,7 +166,11 @@ const MapGenerationFuture = () => {
 
 	// useEffect triggers on new values, from a new csv.
 	React.useEffect(()=>{
-		aggregateStations(values);
+		const aggregatedStations = aggregateStations(values);
+		const enrichedStations = addCSVDataToStations(aggregatedStations);
+		getStationsData(enrichedStations).then(Stations_ => {
+			setStations(Stations_);
+		});
 	},[values]);
 
 	// fill our stations state with station object with correct code
@@ -173,30 +179,125 @@ const MapGenerationFuture = () => {
 		for(var i=0;i<raw_data.length;i++){
 			const curCodeStation = raw_data[i][5].length === 8 ? raw_data[i][5] : '0' + raw_data[i][5];
 			if(!Stations_.some(station => station.code === curCodeStation)){
+				//const station_data = await getStationPCFromCodeStation(curCodeStation)
 				Stations_.push({code:curCodeStation})
 			}
 		}
 		console.log("aggregateStations finished with :")
 		console.log(Stations_);
-		setStations(Stations_);
+		return Stations_;
+	}
+
+	function addCSVDataToStations(Stations_){
+		for(var i=0;i<Stations_.length;i++){
+
+			const csvLines = [];
+			for(var j=0;j<values.length;j++){
+				const curCodeStation = values[j][5].length === 8 ? values[j][5] : '0' + values[j][5];
+				if(curCodeStation === Stations_[i].code){
+					csvLines.push(values[j])
+				}
+			}
+
+			Stations_[i].csvLines = csvLines;
+		}
+		console.log("addCSVDataToStations finished with :")
+		console.log(Stations_);
+		return Stations_;
+	}
+
+	async function getStationsData(Stations_){
+		console.log("calling getStationsData with Stations_:")
+		console.log(Stations_)
+		for(var ii=0;ii<Stations_.length;ii+=200){
+			const code_station_batch = [];
+			for(var j=0;j<200 && ii+j<Stations_.length;j++){
+				code_station_batch.push(Stations_[ii+j].code)
+			}
+			const station_data_batch = await getStationPCFromCodeStationBatched(code_station_batch)
+			for(var jj=0;jj<200 && ii+jj<Stations_.length;jj++){
+				Stations_[ii+jj].station_data = [station_data_batch.find(station_data => station_data.code_station === Stations_[ii+jj].code)]
+			}
+		}
+		return Stations_;
 	}
 
 	// useEffect triggers on new Stations
 	React.useEffect(()=>{
-		aggregateCoursDeau(Stations).then((CoursDeau_)=>{
-			Promise.all(CoursDeau_.map(getCoursDeauGeoJson)).then((CoursDeau__)=>{
-				setCoursDeau(CoursDeau__);
-				console.log("CoursDeau__");
-				console.log(CoursDeau__);
-			});
-		});
+		//draw points for each station
+		console.log("Stations changed, so lets add them to the map")
+		console.log(Stations)
+		drawStationsLayer(Stations);
+
+		// draw cours d'eau
+		// aggregateCoursDeau(Stations).then((CoursDeau_)=>{
+		// 	Promise.all(CoursDeau_.map(getCoursDeauGeoJson)).then((CoursDeau__)=>{
+		// 		setCoursDeau(CoursDeau__);
+		// 		console.log("CoursDeau__");
+		// 		console.log(CoursDeau__);
+		// 	});
+		// });
 	},[Stations]);
+
+	async function drawStationsLayer(stations){
+		if (map) {
+
+			const features = [];
+
+			for(var i=0;i<stations.length;i++){
+
+				console.log(stations[i]);
+
+				if(stations[i].station_data[0] && stations[i].station_data[0]){
+					const OLFormatted_Point = new Point([stations[i].station_data[0].longitude,stations[i].station_data[0].latitude]);
+					const OLFeature = new Feature(OLFormatted_Point)
+
+					var color = "grey";
+					if(stations[i].csvLines.some(line => line[0] === "Carbamazepine")){
+						if(stations[i].csvLines.some(line => line[0] === "Carbamazepine" && parseFloat(line[8]) >= 0.05)){
+							color = "red";
+						} else{
+							color = "green";
+						}
+					}
+
+					const Station_style = new Style({
+						image : new Circle({
+							radius : 3,
+							fill: new Fill({
+								color : color
+							})
+						})
+					})
+					
+
+					OLFeature.setStyle(Station_style)
+					// console.log("OLFormatted_Point :");
+					// console.log(OLFormatted_Point);
+
+					features.push(OLFeature) 
+				} else {
+					console.log("Warning, error no station_data[0] in this station : ")
+					console.log(stations[i])
+				}
+			}
+
+			console.log(features);
+			map.addLayer(
+				new VectorLayer({
+					source: new VectorSource({
+						features: features,
+					})
+				})
+			);
+		}
+	}
 
 	// fill our cours d'eau state with an aggregate of code cours d'eau
 	async function aggregateCoursDeau(stations){
 		const CoursDeau_ = [];
 		for(var i=0;i<stations.length;i++){
-			const station_data = await getStationPCFromCodeStation(stations[i].code)
+			const station_data = stations[i].station_data;
 			if(station_data.length >= 1 && station_data[0].code_cours_eau)
 			{
 				const code_cours_deau = station_data[0].code_cours_eau
@@ -215,7 +316,17 @@ const MapGenerationFuture = () => {
 		console.log(code_station)
 		const station_pc_result = await fetch("https://hubeau.eaufrance.fr/api/v2/qualite_rivieres/station_pc?code_station=" + code_station + "&pretty"); //TODO, we can call api with up to 200 code station at a time so we should definetely do that
 		const station_pc = await station_pc_result.json();
-		console.log("station_pc.data at the end of getStationPCFromCodeCommune :");
+		console.log("station_pc.data at the end of getStationPCFromCodeStation :");
+		console.log(station_pc.data);
+		return station_pc.data;
+	}
+
+	async function getStationPCFromCodeStationBatched(code_station_batch) {
+		console.log("getStationPCFromCodeStationBatched paramters (code_station) :")
+		console.log(code_station_batch)
+		const station_pc_result = await fetch("https://hubeau.eaufrance.fr/api/v2/qualite_rivieres/station_pc?code_station=" + code_station_batch.join(',') + "&pretty"); //TODO, we can call api with up to 200 code station at a time so we should definetely do that
+		const station_pc = await station_pc_result.json();
+		console.log("station_pc.data at the end of getStationPCFromCodeStationBatched :");
 		console.log(station_pc.data);
 		return station_pc.data;
 	}
