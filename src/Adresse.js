@@ -202,7 +202,7 @@ export default function Adresse() {
     async function getCoordinates(adresse){
       
         console.log(adresse)
-        const adresse_result = await fetch('https://api-adresse.data.gouv.fr/search/?q=' + adresse + '&autocomplete=1&pretty', {mode:'no-cors'});
+        const adresse_result = await fetch('https://api-adresse.data.gouv.fr/search/?q=' + adresse + '&autocomplete=1&pretty');
         const geo_result = await adresse_result.json();
         console.log(geo_result);
         console.log(geo_result.features[0].geometry.coordinates[0])
@@ -210,7 +210,7 @@ export default function Adresse() {
         console.log("citycode")
         console.log(geo_result.features[0].properties.citycode)
         var code_commune = (geo_result.features[0].properties.citycode)
-        const UDIs = await fetch('https://hubeau.eaufrance.fr/api/v1/qualite_eau_potable/communes_udi?code_commune=' + code_commune + '&autocomplete=1&pretty', {mode:'no-cors'});
+        const UDIs = await fetch('https://hubeau.eaufrance.fr/api/v1/qualite_eau_potable/communes_udi?code_commune=' + code_commune + '&autocomplete=1&pretty');
         const UDI_List = await UDIs.json();
         console.log(UDI_List)
         setUDI_List(UDI_List.data)
@@ -234,7 +234,7 @@ export default function Adresse() {
     async function display_results(code_reseau, index) {
 
       setQuali("Chargement...")
-      const reseau_results = await fetch('https://hubeau.eaufrance.fr/api//vbeta/qualite_eau_potable/resultats_dis?code_reseau=' + code_reseau + '&autocomplete=1&pretty');
+      const reseau_results = await fetch('https://hubeau.eaufrance.fr/api/v1/qualite_eau_potable/resultats_dis?code_reseau=' + code_reseau + '&autocomplete=1&pretty');
       const resultats = await reseau_results.json();
       console.log(resultats.data[0].conclusion_conformite_prelevement)
 
