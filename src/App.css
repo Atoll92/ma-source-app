@@ -118,3 +118,44 @@ body {
   display: flex;
   flex-direction: row;
 }
+
+#main_anim {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 0;
+  animation: load 5s linear infinite;
+  transform-origin: center;
+  display: none;
+  width: 100px;
+  position: absolute;
+  z-index: 99;
+}
+
+@keyframes load {
+  0% {
+    transform: rotate(0deg);
+    stroke-dashoffset: 50;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    transform: rotate(360deg);
+    stroke-dashoffset: -50;
+  }
+}
+
+.svg {
+  /* ... */
+  --speed: 5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg {
+    --speed: 10s;
+  }
+}
+
+.path {
+  /* ... */
+  animation: load var(--speed, 5s) linear infinite;
+}

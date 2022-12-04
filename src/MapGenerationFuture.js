@@ -12,6 +12,7 @@ import LineString from 'ol/geom/LineString';
 import Point from 'ol/geom/Point';
 import { Circle, Fill } from 'ol/style';
 import Legende from './Legende';
+import Loading from './Loading';
 
 const MapGenerationFuture = () => {
 
@@ -26,12 +27,13 @@ const MapGenerationFuture = () => {
 
 
 	const handleClick = event => {
+		document.getElementById("main_anim").style.display = "block";
+
 		console.log(event.currentTarget.id);
 		setSubstance(event.currentTarget.id)
 		drawStationsLayer(Stations)
 		// setIsActive(current => !current);
 		document.getElementById(substance).style.background = "yellow";
-		
 
 		
 	  };
@@ -61,6 +63,7 @@ const MapGenerationFuture = () => {
 	}, []);
 
     async function changeHandler(event) {
+		document.getElementById("main_anim").style.display = "block";
         Papa.parse(event.target.files[0], {
             header: true,
             skipEmptyLines: true,
@@ -245,6 +248,8 @@ const MapGenerationFuture = () => {
 		console.log("Stations changed, so lets add them to the map")
 		console.log(Stations)
 		drawStationsLayer(Stations);
+		document.getElementById("main_anim").style.display = "none";
+
 
 		// draw cours d'eau
 		// aggregateCoursDeau(Stations).then((CoursDeau_)=>{
@@ -427,6 +432,9 @@ const MapGenerationFuture = () => {
 				})
 			);
 		}
+
+				// document.getElementById("main_anim").style.display = "none";
+
 	}
 
 	// function colorize() {
@@ -595,7 +603,7 @@ return (
           color: isActive ? 'white' : '',
         }} onClick={handleClick} id="Ofloxacine">Ofloxacine</button>
 		</div>
-		
+		<Loading/>
         <div id="mapGF" className='map-container'>
 		
 
