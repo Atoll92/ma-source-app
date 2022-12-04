@@ -99,3 +99,22 @@ body {
 #mapGF{
   border: solid 5px grey;
 }
+
+#button_cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 20vw;
+  margin: auto;
+  left: 0;
+  position: absolute;
+  padding: 3vw;
+  height: 50%;
+  background: cadetblue;
+}
+
+#legende {
+  width: 30vw;
+  display: flex;
+  flex-direction: row;
+}

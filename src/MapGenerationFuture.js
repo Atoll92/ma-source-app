@@ -11,6 +11,7 @@ import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 import LineString from 'ol/geom/LineString';
 import Point from 'ol/geom/Point';
 import { Circle, Fill } from 'ol/style';
+import Legende from './Legende';
 
 const MapGenerationFuture = () => {
 
@@ -20,6 +21,22 @@ const MapGenerationFuture = () => {
     const [Stations, setStations] = useState([]);
     const [CoursDeau, setCoursDeau] = useState([]);
 	const [map, setMap] = useState();
+	const [substance, setSubstance] = useState("");
+	const [isActive, setIsActive] = useState(false);
+
+
+	const handleClick = event => {
+		console.log(event.currentTarget.id);
+		setSubstance(event.currentTarget.id)
+		drawStationsLayer(Stations)
+		// setIsActive(current => !current);
+		document.getElementById(substance).style.background = "yellow";
+		
+
+		
+	  };
+	  console.log("substance")
+	  console.log(substance)
 	
 	var mapAlready = false;
 	React.useEffect(() => {
@@ -252,18 +269,137 @@ const MapGenerationFuture = () => {
 					const OLFormatted_Point = new Point([stations[i].station_data[0].longitude,stations[i].station_data[0].latitude]);
 					const OLFeature = new Feature(OLFormatted_Point)
 
-					var color = "grey";
+
+					
+					if (substance == "Carbamazepine") {
+					var color = "slategrey";
 					if(stations[i].csvLines.some(line => line[0] === "Carbamazepine")){
 						if(stations[i].csvLines.some(line => line[0] === "Carbamazepine" && parseFloat(line[8]) >= 0.05)){
-							color = "red";
+							color = "tomato";
 						} else{
-							color = "green";
+							color = "seagreen";
+						}
+					}
+					}
+
+					if (substance == "Ibuprofène") {
+						
+						var color = "slategrey";
+					if(stations[i].csvLines.some(line => line[0] === "Ibuprofène")){
+						if(stations[i].csvLines.some(line => line[0] === "Ibuprofène" && parseFloat(line[8]) >= 0.22)){
+							color = "tomato";
+						} else{
+							color = "seagreen";
+						}
+					}
+					}
+					// Erythromycine
+					if (substance == "Erythromycine") {
+					var color = "slategrey";
+					if(stations[i].csvLines.some(line => line[0] === "Erythromycine")){
+						if(stations[i].csvLines.some(line => line[0] === "Erythromycine" && parseFloat(line[8]) >= 0.5)){
+							color = "tomato";
+						} else{
+							color = "seagreen";
+						}
+					}
+				}
+				//17 beta-Estradiol
+				if (substance == "17 beta-Estradiol") {
+					var color = "slategrey";
+					if(stations[i].csvLines.some(line => line[0] === "17 beta-Estradiol")){
+						if(stations[i].csvLines.some(line => line[0] === "17 beta-Estradiol" && parseFloat(line[8]) >= 0.00018)){
+							color = "tomato";
+						} else{
+							color = "seagreen";
+						}
+					}
+				}
+
+					// Azithromycine
+					if (substance == "Azithromycine") {
+					var color = "slategrey";
+					if(stations[i].csvLines.some(line => line[0] === "Azithromycine")){
+						if(stations[i].csvLines.some(line => line[0] === "Azithromycine" && parseFloat(line[8]) >= 0.019)){
+							color = "tomato";
+						} else{
+							color = "seagreen";
+						}
+					}
+				}
+						// Clarythromycine
+
+						if (substance == "Clarythromycine") {
+						var color = "slategrey";
+						if(stations[i].csvLines.some(line => line[0] === "Clarythromycine")){
+							if(stations[i].csvLines.some(line => line[0] === "Clarythromycine" && parseFloat(line[8]) >= 0.13)){
+								color = "tomato";
+							} else{
+								color = "seagreen";
+							}
 						}
 					}
 
+						//Diclofenac
+
+						if (substance == "Diclofenac") {
+						
+						var color = "slategrey";
+						if(stations[i].csvLines.some(line => line[0] === "Diclofenac")){
+							if(stations[i].csvLines.some(line => line[0] === "Diclofenac" && parseFloat(line[8]) >= 0.04)){
+								color = "tomato";
+							} else{
+								color = "seagreen";
+							}
+						}
+					}
+
+					if (substance == "Estrone") {
+						
+						var color = "slategrey";
+						if(stations[i].csvLines.some(line => line[0] === "Estrone")){
+							if(stations[i].csvLines.some(line => line[0] === "Estrone" && parseFloat(line[8]) >= 0.00036)){
+								color = "tomato";
+							} else{
+								color = "seagreen";
+							}
+						}
+					}
+
+					//Norethindrone
+
+					if (substance == "Norethindrone") {
+						
+						var color = "slategrey";
+						if(stations[i].csvLines.some(line => line[0] === "Norethindrone")){
+							if(stations[i].csvLines.some(line => line[0] === "Norethindrone" && parseFloat(line[8]) >= 0.04)){
+								color = "tomato";
+							} else{
+								color = "seagreen";
+							}
+						}
+					}
+
+					// Ofloxacine
+
+					if (substance == "Ofloxacine") {
+						
+						var color = "slategrey";
+						if(stations[i].csvLines.some(line => line[0] === "Ofloxacine")){
+							if(stations[i].csvLines.some(line => line[0] === "Ofloxacine" && parseFloat(line[8]) >= 0.11)){
+								color = "tomato";
+							} else{
+								color = "seagreen";
+							}
+						}
+					}
+
+
+						// var color= colorize(color)
+
 					const Station_style = new Style({
 						image : new Circle({
-							radius : 3,
+							radius : 2.5,
 							fill: new Fill({
 								color : color
 							})
@@ -293,6 +429,21 @@ const MapGenerationFuture = () => {
 		}
 	}
 
+	// function colorize() {
+	// 	var color = "blue";
+	// }
+	// function colorize() {
+	// 	var color = "slategrey";
+	// 	if(stations[i].csvLines.some(line => line[0] === "Diclofenac")){
+	// 		if(stations[i].csvLines.some(line => line[0] === "Diclofenac" && parseFloat(line[8]) >= 0.04)){
+	// 			color = "tomato";
+	// 		} else{
+	// 			color = "seagreen";
+	// 		}
+	// 	}
+
+
+	// }
 	// fill our cours d'eau state with an aggregate of code cours d'eau
 	async function aggregateCoursDeau(stations){
 		const CoursDeau_ = [];
@@ -399,8 +550,58 @@ return (
             onChange={changeHandler}
             style={{ display: "block", margin: "10px auto" }}
         />
+		<div id="button_cont">
 
-        <div id="mapGF" className='map-container'></div>
+			<p>Choisissez un médicament pour afficher la carte des seuils d'éco-toxicité correspondante</p>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Diclofenac">Diclofenac</button>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }}  onClick={handleClick} id="Carbamazepine">Carbamazépine</button>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Ibuprofène">Ibuprofène</button>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Clarythromycine">Clarythromycine</button>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Azithromycine">Azithromycine</button>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Erythromycine">Erythromycine</button>
+
+<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="17 beta-Estradiol">17 beta-Estradiol</button>
+		<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Estrone">Estrone</button>
+			<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Norethindrone">Norethindrone</button>
+			<button    style={{
+          backgroundColor: isActive ? 'salmon' : '',
+          color: isActive ? 'white' : '',
+        }} onClick={handleClick} id="Ofloxacine">Ofloxacine</button>
+		</div>
+		
+        <div id="mapGF" className='map-container'>
+		
+
+		</div>
+		<Legende/>
+		
         {/* <table>
             <thead>
                 <tr>
