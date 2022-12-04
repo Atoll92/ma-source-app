@@ -417,6 +417,7 @@ const MapGenerationFuture = () => {
 					// console.log(OLFormatted_Point);
 
 					features.push(OLFeature) 
+
 				} else {
 					console.log("Warning, error no station_data[0] in this station : ")
 					console.log(stations[i])
@@ -431,9 +432,11 @@ const MapGenerationFuture = () => {
 					})
 				})
 			);
+
+			document.getElementById("main_anim").style.display = "none";
+
 		}
 
-				// document.getElementById("main_anim").style.display = "none";
 
 	}
 
