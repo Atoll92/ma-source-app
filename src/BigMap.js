@@ -255,7 +255,7 @@ animate();
       <option value="circles-zoom">Circles, size related to zoom</option>
       <option value="rotating-bars">Rotating bars</option>
     </select>
-    <textarea style="width: 100%; height: 20rem; font-family: monospace; font-size: small;" id="style-editor"></textarea>
+    <textarea style="width: 100%; height: 20rem; font-family: monospace; fontSize: small;" id="style-editor"></textarea>
     <small>
       <span id="style-valid" style="display: none; color: forestgreen">✓ style is valid</span>
       <span id="style-invalid" style="display: none; color: grey">✗ <span>style not yet valid...</span></span>
