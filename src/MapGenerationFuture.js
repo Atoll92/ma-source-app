@@ -13,6 +13,8 @@ import Point from 'ol/geom/Point';
 import { Circle, Fill } from 'ol/style';
 import Legende from './Legende';
 import Loading from './Loading';
+import logoGN from './Logo-generations-futures.png'
+import logoDG from './double_geste.png'
 
 const MapGenerationFuture = () => {
 
@@ -611,7 +613,7 @@ return (
 		
 
 		</div>
-		<Legende/>
+		<Legende/><img style={{width:"200px"}} src={logoGN}></img><img style={{width:"200px"}} src={logoDG}></img>
 		
         {/* <table>
             <thead>
