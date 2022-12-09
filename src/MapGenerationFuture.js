@@ -24,21 +24,31 @@ const MapGenerationFuture = () => {
 	const [map, setMap] = useState();
 	const [substance, setSubstance] = useState("");
 	const [isActive, setIsActive] = useState(false);
+	const [loadingStatus, setloadingStatus] = useState(false);
 
 
-	const handleClick = event => {
-		document.getElementById("main_anim").style.display = "block";
+	const SubstanceButton = (props) => {
+		return(<button style={{
+			backgroundColor: props.sub === substance ? 'salmon' : '',
+			color: props.sub === substance ? 'white' : '',
+		  }} 
+		  onClick={() => setSubstance(props.sub)}>{props.sub}</button>)
+	}
 
-		console.log(event.currentTarget.id);
-		setSubstance(event.currentTarget.id)
-		drawStationsLayer(Stations)
-		// setIsActive(current => !current);
-		document.getElementById(substance).style.background = "yellow";
+
+	// const handleClick = event => {
+	// 	document.getElementById("main_anim").style.display = "block";
+
+	// 	console.log(event.currentTarget.id);
+	// 	setSubstance(event.currentTarget.id)
+	// 	drawStationsLayer(Stations)
+	// 	// setIsActive(current => !current);
+	// 	document.getElementById(substance).style.background = "yellow";
 
 		
-	  };
-	  console.log("substance")
-	  console.log(substance)
+	//   };
+	//   console.log("substance")
+	//   console.log(substance)
 	
 	var mapAlready = false;
 	React.useEffect(() => {
@@ -63,111 +73,14 @@ const MapGenerationFuture = () => {
 	}, []);
 
     async function changeHandler(event) {
-		document.getElementById("main_anim").style.display = "block";
+		setloadingStatus(true);
         Papa.parse(event.target.files[0], {
             header: true,
             skipEmptyLines: true,
             complete: async function (results) {
-                // const Stations_ = [];
-                // const Communes = [];
-                // const _Coords = [];
-
 				FillValuesAndRows(results.data);
-                
-                // // Parsed Data Response in array format
-                // setParsedData(results.data);
-
-                // Filtered Column Names
-                // setTableRows(rowsArray[0]);
-                // console.log("valuesArray");
-                // console.log(valuesArray);
-
-                // Filtered Values
-                // var filteredValues = valuesArray.filter(row => row[12] != "0")
-                // var filteredValues = valuesArray
-                // for (var i = 0; i < 10000; i++) {
-                //     var curCodeCommune = filteredValues ? (filteredValues[i] ? filteredValues[i][3] : null) : null;
-                //     if (curCodeCommune && !Communes.some(commune => commune.code === curCodeCommune)) {
-                    
-                //         console.log("nouvelle commune")
-                //         // var coord = await  getStationCoordinates(filteredValues[i][5])
-                //         var code_commune = curCodeCommune
-                //         if (code_commune.length === 4) {
-                //             code_commune = "0"+code_commune;
-                //             console.log("fixed code_commune")
-                //             console.log(code_commune)
-                //         }
-                //         var coords = await getCoordinatesFromCodeCommune(code_commune)
-                //         console.log([i])
-
-                //         Communes.push({
-                //             code: [i],
-                //             // code: filteredValues[i][3],
-                //             coords: coords,
-                //             mesure: [filteredValues[i]]
-                //         })
-
-                //         _Coords.push({features: coords })
-                //     }
-                //     else if (curCodeCommune) {
-
-                //         var CommuneIndex = Communes.findIndex((obj => obj.code == curCodeCommune));
-                //         Communes[CommuneIndex].mesure.push(filteredValues[i])
-                //         console.log("already existing commune")
-                //         console.log("Communes");
-                //         // Coords.push({features: coords })
-                //         // Coords.push({features: coords.features.coordinates[i] })
-                //         // setCoords( coords.features.coordinates[i])
-
-
-                //         console.log(Communes);
-                    
-                        
-                //         // SetCoco(Communes)
-                        
-                //         // SetCoco(Communes[2].coords.coordinates)
-
-
-
-                //     }
-
-                
-
-                //     setCoordsResults(Coords_results);
-
-                //     SetCoco([Communes])
-                //     setCoords(_Coords);
-                //     // console.log("new commune")
-                //     // console.log(CommunesCoords)
-                //     // newMap();
-
-                // }
-
-                // pushCoords(_Coords);
-                // console.log("completed changeHandler")
             },
         });
-        //console.log(event.target.files[0])
-
-        //   newMap();
-    //     function pushCoords() {
-    //         var i;
-    //         for (i=0; i<100; i ++ ) {
-    //             Coordinates.push(Coords[i].features.coordinates)
-    //         }
-
-
-    //     }
-    //     pushCoords();
-    // //     newMap();
-    // // console.log("new map ")
-    // console.log("Coordinatess")
-    //     console.log(Coordinates)
-
-
-        //return Communes;
-        
-
     };
 
 	// fill our states with data returned by papa parse
@@ -247,8 +160,11 @@ const MapGenerationFuture = () => {
 		//draw points for each station
 		console.log("Stations changed, so lets add them to the map")
 		console.log(Stations)
+		//document.getElementById("main_anim").style.display = "block";
+		setloadingStatus(true);
 		drawStationsLayer(Stations);
-		document.getElementById("main_anim").style.display = "none";
+		setloadingStatus(false);
+		// document.getElementById("main_anim").style.display = "none";
 
 
 		// draw cours d'eau
@@ -259,7 +175,7 @@ const MapGenerationFuture = () => {
 		// 		console.log(CoursDeau__);
 		// 	});
 		// });
-	},[Stations]);
+	},[Stations,substance]);
 
 	async function drawStationsLayer(stations){
 		if (map) {
@@ -433,7 +349,7 @@ const MapGenerationFuture = () => {
 				})
 			);
 
-			document.getElementById("main_anim").style.display = "none";
+			//document.getElementById("main_anim").style.display = "none";
 
 		}
 
@@ -564,49 +480,18 @@ return (
 		<div id="button_cont">
 
 			<p>Choisissez un médicament pour afficher la carte des seuils d'éco-toxicité correspondante</p>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Diclofenac">Diclofenac</button>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }}  onClick={handleClick} id="Carbamazepine">Carbamazépine</button>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Ibuprofène">Ibuprofène</button>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Clarythromycine">Clarythromycine</button>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Azithromycine">Azithromycine</button>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Erythromycine">Erythromycine</button>
-
-<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="17 beta-Estradiol">17 beta-Estradiol</button>
-		<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Estrone">Estrone</button>
-			<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Norethindrone">Norethindrone</button>
-			<button    style={{
-          backgroundColor: isActive ? 'salmon' : '',
-          color: isActive ? 'white' : '',
-        }} onClick={handleClick} id="Ofloxacine">Ofloxacine</button>
+			<SubstanceButton sub={"Diclofenac"}/>
+			<SubstanceButton sub={"Carbamazepine"}/>
+			<SubstanceButton sub={"Ibuprofène"}/>
+			<SubstanceButton sub={"Clarythromycine"}/>
+			<SubstanceButton sub={"Azithromycine"}/>
+			<SubstanceButton sub={"Erythromycine"}/>
+			<SubstanceButton sub={"17 beta-Estradiol"}/>
+			<SubstanceButton sub={"Estrone"}/>
+			<SubstanceButton sub={"Norethindrone"}/>
+			<SubstanceButton sub={"Ofloxacine"}/>
 		</div>
-		<Loading/>
+		{loadingStatus && <Loading/>}
         <div id="mapGF" className='map-container'>
 		
 
