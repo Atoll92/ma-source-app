@@ -23,11 +23,9 @@ const MapGenerationFuture = () => {
     const [values, setValues] = useState([]);
     const [Stations, setStations] = useState([]);
     const [CoursDeau, setCoursDeau] = useState([]);
-	const [map, setMap] = useState();
+	const [map, setMap] = useState(null);
 	const [substance, setSubstance] = useState("");
-	const [isActive, setIsActive] = useState(false);
 	const [loadingStatus, setloadingStatus] = useState(false);
-
 
 	const SubstanceButton = (props) => {
 		return(<button style={{
@@ -37,6 +35,7 @@ const MapGenerationFuture = () => {
 		  onClick={() => setSubstance(props.sub)}>{props.sub}</button>)
 	}
 	
+	// create map and init cours d'eau
 	var mapAlready = false;
 	React.useEffect(() => {
 		if (!mapAlready) {
@@ -59,7 +58,7 @@ const MapGenerationFuture = () => {
 		}
 	}, []);
 
-    async function changeHandler(event) {
+    async function LoadCSVFile(event) {
 		setloadingStatus(true);
         Papa.parse(event.target.files[0], {
             header: true,
@@ -86,11 +85,17 @@ const MapGenerationFuture = () => {
 
 	// useEffect triggers on new values, from a new csv.
 	React.useEffect(()=>{
-		const aggregatedStations = aggregateStations(values);
-		const enrichedStations = addCSVDataToStations(aggregatedStations);
-		getStationsData(enrichedStations).then(Stations_ => {
-			setStations(Stations_);
-		});
+		if(values.length > 0){
+			const aggregatedStations = aggregateStations(values);
+			const enrichedStations = addCSVDataToStations(aggregatedStations);
+			getStationsData(enrichedStations).then(Stations_ => {
+				setStations(Stations_);
+				aggregateCoursDeau(Stations_).then(CoursDeau_ => {
+					const allCoursDeauGeoJson = CoursDeau_.map(CoursDeau_i => getCoursDeauGeoJson(CoursDeau_i))
+					Promise.all(allCoursDeauGeoJson).then(allCoursDeauGeoJsonResolved => setCoursDeau(allCoursDeauGeoJsonResolved))
+				})
+			})
+		}
 	},[values]);
 
 	// fill our stations state with station object with correct code
@@ -142,11 +147,13 @@ const MapGenerationFuture = () => {
 		return Stations_;
 	}
 
-	// useEffect triggers on new Stations
+	// useEffect triggers on new Stations of substance to draw them
 	React.useEffect(()=>{
 		//draw points for each station
-		setloadingStatus(true);
-		drawStationsLayer(Stations).then(() => setloadingStatus(false));
+		if(Stations.length>0){
+			setloadingStatus(true);
+			drawStationsLayer(Stations).then(() => setloadingStatus(false));
+		}
 	},[Stations,substance]);
 
 	async function drawStationsLayer(stations){
@@ -162,127 +169,114 @@ const MapGenerationFuture = () => {
 					const OLFormatted_Point = new Point([stations[i].station_data[0].longitude,stations[i].station_data[0].latitude]);
 					const OLFeature = new Feature(OLFormatted_Point)
 
+					if(substance){
+						var color = "slategrey";
+					}
 
-					
-					if (substance == "Carbamazepine") {
-					var color = "slategrey";
+					if (substance === "Carbamazepine") {
 					if(stations[i].csvLines.some(line => line[0] === "Carbamazepine")){
 						if(stations[i].csvLines.some(line => line[0] === "Carbamazepine" && parseFloat(line[8]) >= 0.05)){
-							color = "tomato";
+							color = "red";
 						} else{
-							color = "seagreen";
+							color = "green";
 						}
 					}
 					}
 
-					if (substance == "Ibuprofène") {
-						
-						var color = "slategrey";
+					if (substance === "Ibuprofène") {
 					if(stations[i].csvLines.some(line => line[0] === "Ibuprofène")){
 						if(stations[i].csvLines.some(line => line[0] === "Ibuprofène" && parseFloat(line[8]) >= 0.22)){
-							color = "tomato";
+							color = "red";
 						} else{
-							color = "seagreen";
+							color = "green";
 						}
 					}
 					}
 					// Erythromycine
-					if (substance == "Erythromycine") {
-					var color = "slategrey";
+					if (substance === "Erythromycine") {
 					if(stations[i].csvLines.some(line => line[0] === "Erythromycine")){
 						if(stations[i].csvLines.some(line => line[0] === "Erythromycine" && parseFloat(line[8]) >= 0.5)){
-							color = "tomato";
+							color = "red";
 						} else{
-							color = "seagreen";
+							color = "green";
 						}
 					}
 				}
 				//17 beta-Estradiol
-				if (substance == "17 beta-Estradiol") {
-					var color = "slategrey";
+				if (substance === "17 beta-Estradiol") {
 					if(stations[i].csvLines.some(line => line[0] === "17 beta-Estradiol")){
 						if(stations[i].csvLines.some(line => line[0] === "17 beta-Estradiol" && parseFloat(line[8]) >= 0.00018)){
-							color = "tomato";
+							color = "red";
 						} else{
-							color = "seagreen";
+							color = "green";
 						}
 					}
 				}
 
 					// Azithromycine
-					if (substance == "Azithromycine") {
-					var color = "slategrey";
+					if (substance === "Azithromycine") {
 					if(stations[i].csvLines.some(line => line[0] === "Azithromycine")){
 						if(stations[i].csvLines.some(line => line[0] === "Azithromycine" && parseFloat(line[8]) >= 0.019)){
-							color = "tomato";
+							color = "red";
 						} else{
-							color = "seagreen";
+							color = "green";
 						}
 					}
 				}
 						// Clarythromycine
 
-						if (substance == "Clarythromycine") {
-						var color = "slategrey";
+						if (substance === "Clarythromycine") {
 						if(stations[i].csvLines.some(line => line[0] === "Clarythromycine")){
 							if(stations[i].csvLines.some(line => line[0] === "Clarythromycine" && parseFloat(line[8]) >= 0.13)){
-								color = "tomato";
+								color = "red";
 							} else{
-								color = "seagreen";
+								color = "green";
 							}
 						}
 					}
 
 						//Diclofenac
 
-						if (substance == "Diclofenac") {
-						
-						var color = "slategrey";
+						if (substance === "Diclofenac") {
 						if(stations[i].csvLines.some(line => line[0] === "Diclofenac")){
 							if(stations[i].csvLines.some(line => line[0] === "Diclofenac" && parseFloat(line[8]) >= 0.04)){
-								color = "tomato";
+								color = "red";
 							} else{
-								color = "seagreen";
+								color = "green";
 							}
 						}
 					}
 
-					if (substance == "Estrone") {
-						
-						var color = "slategrey";
+					if (substance === "Estrone") {
 						if(stations[i].csvLines.some(line => line[0] === "Estrone")){
 							if(stations[i].csvLines.some(line => line[0] === "Estrone" && parseFloat(line[8]) >= 0.00036)){
-								color = "tomato";
+								color = "red";
 							} else{
-								color = "seagreen";
+								color = "green";
 							}
 						}
 					}
 
 					//Norethindrone
 
-					if (substance == "Norethindrone") {
-						
-						var color = "slategrey";
+					if (substance === "Norethindrone") {
 						if(stations[i].csvLines.some(line => line[0] === "Norethindrone")){
 							if(stations[i].csvLines.some(line => line[0] === "Norethindrone" && parseFloat(line[8]) >= 0.04)){
-								color = "tomato";
+								color = "red";
 							} else{
-								color = "seagreen";
+								color = "green";
 							}
 						}
 					}
 
 					// Ofloxacine
 
-					if (substance == "Ofloxacine") {
-						
-						var color = "slategrey";
+					if (substance === "Ofloxacine") {
 						if(stations[i].csvLines.some(line => line[0] === "Ofloxacine")){
 							if(stations[i].csvLines.some(line => line[0] === "Ofloxacine" && parseFloat(line[8]) >= 0.11)){
-								color = "tomato";
+								color = "red";
 							} else{
-								color = "seagreen";
+								color = "green";
 							}
 						}
 					}
@@ -292,7 +286,7 @@ const MapGenerationFuture = () => {
 
 					const Station_style = new Style({
 						image : new Circle({
-							radius : 2.5,
+							radius : 4,
 							fill: new Fill({
 								color : color
 							})
@@ -328,31 +322,19 @@ const MapGenerationFuture = () => {
 
 	}
 
-	// function colorize() {
-	// 	var color = "blue";
-	// }
-	// function colorize() {
-	// 	var color = "slategrey";
-	// 	if(stations[i].csvLines.some(line => line[0] === "Diclofenac")){
-	// 		if(stations[i].csvLines.some(line => line[0] === "Diclofenac" && parseFloat(line[8]) >= 0.04)){
-	// 			color = "tomato";
-	// 		} else{
-	// 			color = "seagreen";
-	// 		}
-	// 	}
-
-
-	// }
 	// fill our cours d'eau state with an aggregate of code cours d'eau
 	async function aggregateCoursDeau(stations){
 		const CoursDeau_ = [];
 		for(var i=0;i<stations.length;i++){
 			const station_data = stations[i].station_data;
-			if(station_data.length >= 1 && station_data[0].code_cours_eau)
+			if(station_data.length >= 1 && station_data[0] && station_data[0].code_cours_eau)
 			{
 				const code_cours_deau = station_data[0].code_cours_eau
 				if(!CoursDeau_.some(c => c.code === code_cours_deau)){
-					CoursDeau_.push({code:code_cours_deau})
+					CoursDeau_.push({code:code_cours_deau,linked_stations:[stations[i]]})
+				} else {
+					const cdindex = CoursDeau_.findIndex((c => c.code === code_cours_deau))
+					CoursDeau_[cdindex].linked_stations.push(stations[i])
 				}
 			}
 		}
@@ -361,23 +343,13 @@ const MapGenerationFuture = () => {
 		return CoursDeau_;
 	}
 
-	async function getStationPCFromCodeStation(code_station) {
-		console.log("getStationPCFromCodeStation paramters (code_station) :")
-		console.log(code_station)
-		const station_pc_result = await fetch("https://hubeau.eaufrance.fr/api/v2/qualite_rivieres/station_pc?code_station=" + code_station + "&pretty"); //TODO, we can call api with up to 200 code station at a time so we should definetely do that
-		const station_pc = await station_pc_result.json();
-		console.log("station_pc.data at the end of getStationPCFromCodeStation :");
-		console.log(station_pc.data);
-		return station_pc.data;
-	}
-
 	async function getStationPCFromCodeStationBatched(code_station_batch) {
-		console.log("getStationPCFromCodeStationBatched paramters (code_station) :")
-		console.log(code_station_batch)
+		// console.log("getStationPCFromCodeStationBatched paramters (code_station) :")
+		// console.log(code_station_batch)
 		const station_pc_result = await fetch("https://hubeau.eaufrance.fr/api/v2/qualite_rivieres/station_pc?code_station=" + code_station_batch.join(',') + "&pretty"); //TODO, we can call api with up to 200 code station at a time so we should definetely do that
 		const station_pc = await station_pc_result.json();
-		console.log("station_pc.data at the end of getStationPCFromCodeStationBatched :");
-		console.log(station_pc.data);
+		// console.log("station_pc.data at the end of getStationPCFromCodeStationBatched :");
+		// console.log(station_pc.data);
 		return station_pc.data;
 	}
 
@@ -398,7 +370,7 @@ const MapGenerationFuture = () => {
 	}
 
 	React.useEffect(()=>{
-		if (map) {
+		if (map && CoursDeau.length > 0) {
 
 			console.log("CoursDeau changed, so lets add it to the map")
 			console.log(CoursDeau)
@@ -408,10 +380,34 @@ const MapGenerationFuture = () => {
 			for(var i=0;i<CoursDeau.length;i++){
 				if(CoursDeau[i].geoJson.features[0] && CoursDeau[i].geoJson.features[0].geometry && CoursDeau[i].geoJson.features[0].geometry.type === "LineString"){
 					const OLFormatted_LineString = new LineString(CoursDeau[i].geoJson.features[0].geometry.coordinates);
+					const OLFeature = new Feature(OLFormatted_LineString)
 					console.log("OLFormatted_LineString :");
 					console.log(OLFormatted_LineString);
 
-					features.push(new Feature(OLFormatted_LineString)) 
+					var color = "darkblue";
+					if(substance){
+						color = "slategrey";
+					}
+
+					if (substance === "Carbamazepine") {
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Carbamazepine"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Carbamazepine" && parseFloat(line[8]) >= 0.05))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+					const Station_style = new Style({
+						stroke: new Stroke({
+							color: color,
+							width: 2,
+						}),
+					})
+
+					OLFeature.setStyle(Station_style)
+					features.push(OLFeature) 
 				} else {
 					console.log("Warning, following cours d'eau doesnt have a feature in its geoJson or not a LineString")
 					console.log(CoursDeau[i])
@@ -429,14 +425,14 @@ const MapGenerationFuture = () => {
 					}),
 					style: new Style({
 						stroke: new Stroke({
-						  color: 'rgba(255, 0, 0, 1)', //finished line
-						  width: 1,
+						  //color: 'rgba(0, 0, 200, 1)', //finished line
+						  width: 2,
 						}),
 					}),
 				})
 			);
 		}
-	},[CoursDeau]);
+	},[CoursDeau,substance]);
 
 return (
     <div>
@@ -446,11 +442,10 @@ return (
             type="file"
             name="file"
             accept=".csv"
-            onChange={changeHandler}
+            onChange={LoadCSVFile}
             style={{ display: "block", margin: "10px auto" }}
         />
 		<div id="button_cont">
-
 			<p>Choisissez un médicament pour afficher la carte des seuils d'éco-toxicité correspondante</p>
 			<SubstanceButton sub={"Diclofenac"}/>
 			<SubstanceButton sub={"Carbamazepine"}/>
@@ -464,12 +459,8 @@ return (
 			<SubstanceButton sub={"Ofloxacine"}/>
 		</div>
 		{loadingStatus && <Loading/>}
-        <div id="mapGF" className='map-container'>
-		
-
-		</div>
+        <div id="mapGF" className='map-container'></div>
 		<Legende/><img style={{width:"200px"}} src={logoGN}></img><img style={{width:"200px"}} src={logoDG}></img>
-		
         {/* <table>
             <thead>
                 <tr>
