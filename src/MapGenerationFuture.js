@@ -36,21 +36,6 @@ const MapGenerationFuture = () => {
 		  }} 
 		  onClick={() => setSubstance(props.sub)}>{props.sub}</button>)
 	}
-
-
-	// const handleClick = event => {
-	// 	document.getElementById("main_anim").style.display = "block";
-
-	// 	console.log(event.currentTarget.id);
-	// 	setSubstance(event.currentTarget.id)
-	// 	drawStationsLayer(Stations)
-	// 	// setIsActive(current => !current);
-	// 	document.getElementById(substance).style.background = "yellow";
-
-		
-	//   };
-	//   console.log("substance")
-	//   console.log(substance)
 	
 	var mapAlready = false;
 	React.useEffect(() => {
@@ -160,23 +145,8 @@ const MapGenerationFuture = () => {
 	// useEffect triggers on new Stations
 	React.useEffect(()=>{
 		//draw points for each station
-		console.log("Stations changed, so lets add them to the map")
-		console.log(Stations)
-		//document.getElementById("main_anim").style.display = "block";
 		setloadingStatus(true);
-		drawStationsLayer(Stations);
-		setloadingStatus(false);
-		// document.getElementById("main_anim").style.display = "none";
-
-
-		// draw cours d'eau
-		// aggregateCoursDeau(Stations).then((CoursDeau_)=>{
-		// 	Promise.all(CoursDeau_.map(getCoursDeauGeoJson)).then((CoursDeau__)=>{
-		// 		setCoursDeau(CoursDeau__);
-		// 		console.log("CoursDeau__");
-		// 		console.log(CoursDeau__);
-		// 	});
-		// });
+		drawStationsLayer(Stations).then(() => setloadingStatus(false));
 	},[Stations,substance]);
 
 	async function drawStationsLayer(stations){
