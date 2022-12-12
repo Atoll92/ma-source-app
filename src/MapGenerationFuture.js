@@ -26,6 +26,7 @@ const MapGenerationFuture = () => {
 	const [map, setMap] = useState(null);
 	const [substance, setSubstance] = useState("");
 	const [loadingStatus, setloadingStatus] = useState(false);
+	const [features, setFeatures] = useState([]);
 
 	const SubstanceButton = (props) => {
 		return(<button style={{
@@ -399,6 +400,111 @@ const MapGenerationFuture = () => {
 						}
 					}
 
+						if (substance === "Ibuprofène") {
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Ibuprofène"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Ibuprofène" && parseFloat(line[8]) >= 0.22))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+					if (substance === "Erythromycine") {
+						var threshold = 0.5;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Erythromycine"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Erythromycine" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+					if (substance === "17 beta-Estradiol") {
+						var threshold = 0.00018;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "17 beta-Estradiol"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "17 beta-Estradiol" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+
+
+					if (substance === "Azithromycine") {
+						var threshold = 0.019;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Azithromycine"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Azithromycine" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+					if (substance === "Clarythromycine") {
+						var threshold = 0.13;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Clarythromycine"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Clarythromycine" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+					if (substance === "Diclofenac") {
+						var threshold = 0.04;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Diclofenac"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Diclofenac" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+					if (substance === "Estrone") {
+						var threshold = 0.00036;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Estrone"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Estrone" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+						if (substance === "Norethindrone") {
+						var threshold = 0.04;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Norethindrone"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Norethindrone" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+					if (substance === "Ofloxacine") {
+						var threshold = 0.11;
+						if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Ofloxacine"))){
+							if(CoursDeau[i].linked_stations.some(station => station.csvLines.some(line => line[0] === "Ofloxacine" && parseFloat(line[8]) >= threshold))){
+								color = "red";
+							} else{
+								color = "green";
+							}
+						}
+					}
+
+				
+
+
+			
+
+
 					const Station_style = new Style({
 						stroke: new Stroke({
 							color: color,
@@ -416,6 +522,7 @@ const MapGenerationFuture = () => {
 
 			console.log("features")
 			console.log(features)
+			setFeatures(features)
 
 
 			map.addLayer(
@@ -433,6 +540,12 @@ const MapGenerationFuture = () => {
 			);
 		}
 	},[CoursDeau,substance]);
+
+	function hide_features(features, map) {
+		// features.setStyle(new Style({}));
+		map.removeLayer(features)
+		console.log("rivers removed ! ")
+	}
 
 return (
     <div>
@@ -457,6 +570,7 @@ return (
 			<SubstanceButton sub={"Estrone"}/>
 			<SubstanceButton sub={"Norethindrone"}/>
 			<SubstanceButton sub={"Ofloxacine"}/>
+			{/* <button onClick={hide_features} id="hiderivers">affichage rivières</button> */}
 		</div>
 		{loadingStatus && <Loading/>}
         <div id="mapGF" className='map-container'></div>
