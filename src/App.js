@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Stations from './MapGenerationFuture';
 import Carte from './Carte';
 import LeafletMap from './LeafletMap';
+import { Link } from 'react-router-dom';
 
 
 
@@ -22,6 +23,7 @@ function App() {
         <h1>
           Ma source 
         </h1>
+        <Link to="/nappe">Nappe</Link>
         <Adresse/>
         <Stations/>
         {/* <LeafletMap/> */}
